@@ -1,8 +1,17 @@
 // @ts-nocheck
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CartModal(props: any) {
+  const router = useRouter();
+
   if (!props.isOpen) return null;
+
+  const handleCheckout = () => {
+    // Fecha o modal e redireciona para a página de checkout real
+    if (props.onClose) props.onClose();
+    router.push('/checkout');
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -54,7 +63,7 @@ export default function CartModal(props: any) {
 
             {props.currentUser ? (
               <button
-                onClick={() => alert('Redirecionando para pagamento...')}
+                onClick={handleCheckout}
                 className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-pink-600/20"
               >
                 Finalizar Compra

@@ -1,12 +1,9 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  // Remova qualquer bloco "eslint: { ... }" daqui
   typescript: {
-    ignoreBuildErrors: true,
-  },
-  // @ts-ignore
-  eslint: {
-    ignoreDuringBuilds: true,
+    ignoreBuildErrors: true, // Se estiver usando para ignorar erros de build
   },
 };
 

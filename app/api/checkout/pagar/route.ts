@@ -1,19 +1,19 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-// Inicializa o cliente Supabase com a Service Role Key para permissão de gravação
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
-
 export async function POST(request: Request) {
   try {
+    // Inicializa o cliente Supabase dentro da função para evitar erros no build estático
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
     const body = await request.json();
     const {
-      cliente,        // Objeto: { nome, email, cpfCnpj, telefone, cep, numeroEndereco }
-      itens,          // Array de produtos
-      valorFrete,     // Valor numérico do frete
+      cliente,       // Objeto: { nome, email, cpfCnpj, telefone, cep, numeroEndereco }
+      itens,         // Array de produtos
+      valorFrete,    // Valor numérico do frete
       metodoPagamento, // 'PIX' ou 'CREDIT_CARD'
       dadosCartao,    // Objeto com dados do cartão (apenas se metodoPagamento === 'CREDIT_CARD')
       tenantId,       // ID do tenant (loja)
