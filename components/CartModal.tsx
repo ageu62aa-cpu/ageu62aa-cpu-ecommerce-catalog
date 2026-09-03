@@ -8,9 +8,13 @@ export default function CartModal(props: any) {
   if (!props.isOpen) return null;
 
   const handleCheckout = () => {
-    // Fecha o modal e redireciona para a página de checkout real
     if (props.onClose) props.onClose();
     router.push('/checkout');
+  };
+
+  const handleAuthRedirect = () => {
+    if (props.onClose) props.onClose();
+    router.push('/login');
   };
 
   return (
@@ -42,7 +46,7 @@ export default function CartModal(props: any) {
                     <p className="text-sm text-gray-500">Qtd: {item.quantity || 1}</p>
                   </div>
                   <p className="font-bold text-pink-600">
-                    R$ {((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                    R$ {((item.price || item.preco || 0) * (item.quantity || 1)).toFixed(2)}
                   </p>
                 </div>
               ))}
@@ -61,21 +65,33 @@ export default function CartModal(props: any) {
               </div>
             </div>
 
-            {props.currentUser ? (
+            <div className="space-y-2 pt-2">
               <button
-                onClick={handleCheckout}
-                className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-pink-600/20"
+                onClick={() => {
+                  if (props.onClose) props.onClose();
+                  router.push('/carrinho');
+                }}
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 rounded-xl font-bold transition-all text-sm"
               >
-                Finalizar Compra
+                Ver Carrinho Completo
               </button>
-            ) : (
-              <button
-                onClick={props.onAuthClick}
-                className="w-full bg-gray-900 hover:bg-black text-white py-3.5 rounded-xl font-bold transition-all shadow-lg"
-              >
-                Entrar para Finalizar
-              </button>
-            )}
+
+              {props.currentUser ? (
+                <button
+                  onClick={handleCheckout}
+                  className="w-full bg-pink-600 hover:bg-pink-700 text-white py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-pink-600/20"
+                >
+                  Finalizar Compra
+                </button>
+              ) : (
+                <button
+                  onClick={handleAuthRedirect}
+                  className="w-full bg-gray-900 hover:bg-black text-white py-3.5 rounded-xl font-bold transition-all shadow-lg"
+                >
+                  Entrar para Finalizar
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
