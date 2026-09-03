@@ -5,40 +5,45 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { cepDestino, products } = body;
 
-    // Token do Sandbox do Melhor Envio fornecido
-    const melhorEnvioToken = '$token_aqui_ou_via_env'; // ou process.env.MELHOR_ENVIO_TOKEN
-    
-    // CEP de origem padrão da loja (exemplo, altere para o seu CEP de despacho)
-    const cepOrigem = process.env.NEXT_PUBLIC_CEP_ORIGEM || '01001000';
+    const melhorEnvioToken = process.env.MELHOR_ENVIO_TOKEN;
+    if (!melhorEnvioToken) {
+      return NextResponse.json(
+        { success: false, error: 'Token do Melhor Envio não configurado no ambiente.' },
+        { status: 400 }
+      );
+    }
 
-    // Monta os produtos no formato exigido pela API do Melhor Envio
-    const formattedProducts = products && products.length > 0 ? products.map((item: any) => ({
-      id: String(item.id || '1'),
-      width: item.width || 11,
-      height: item.height || 11,
-      length: item.length || 16,
-      weight: item.weight || 0.3,
-      insurance_value: item.price || 50.0,
-      quantity: item.quantity || 1
-    })) : [
-      {
-        id: '1',
-        width: 11,
-        height: 11,
-        length: 16,
-        weight: 0.3,
-        insurance_value: 50.0,
-        quantity: 1
-      }
-    ];
+    const cepOrigem = process.env.NEXT_PUBLIC_CEP_ORIGEM;
+    if (!cepOrigem) {
+      return NextResponse.json(
+        { success: false, error: 'CEP de origem não configurado no ambiente.' },
+        { status: 400 }
+      );
+    }
 
-    // Requisição para a API de cálculo do Melhor Envio (Sandbox)
+    if (!products || products.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Nenhum produto enviado para o cálculo de frete.' },
+        { status: 400 }
+      );
+    }
+
+    const formattedProducts = products.map((item: any) => ({
+      id: String(item.id),
+      width: Number(item.width),
+      height: Number(item.height),
+      length: Number(item.length),
+      weight: Number(item.weight),
+      insurance_value: Number(item.price || item.preco),
+      quantity: Number(item.quantity || 1)
+    }));
+
     const response = await fetch('https://sandbox.melhorenvio.com.br/api/v2/me/shipment/calculate', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.MELHOR_ENVIO_TOKEN || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI5NT6...'}` ,
+        'Authorization': `Bearer ${melhorEnvioToken}`,
         'User-Agent': 'Aplicação lucymake.ecommerce (contato@lucymake.com)'
       },
       body: JSON.stringify({
@@ -46,7 +51,7 @@ export async function POST(request: Request) {
           postal_code: cepOrigem.replace(/\D/g, '')
         },
         to: {
-          postal_code: cepDestino.replace(/\D/g, '')
+          postal_code: String(cepDestino).replace(/\D/g, '')
         },
         products: formattedProducts
       })
