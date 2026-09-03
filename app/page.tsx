@@ -1,5 +1,4 @@
 'use client';
-// @ts-nocheck
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -17,7 +16,6 @@ export default function Page() {
   const [currentUser, setCurrentUser] = useState<{ name: string; email: string } | null>(null);
 
   useEffect(() => {
-    // Carrega o usuário salvo no login (se houver)
     const savedUser = localStorage.getItem('lucymake_user');
     if (savedUser) {
       try {
@@ -27,7 +25,6 @@ export default function Page() {
       }
     }
 
-    // Carrega o carrinho salvo
     const savedCart = localStorage.getItem('cart');
     if (savedCart) {
       try {
@@ -79,7 +76,7 @@ export default function Page() {
 
       <main className="max-w-7xl mx-auto px-4 py-16 flex-grow text-center">
         <h2 className="text-4xl font-black text-gray-900 mb-4">Bem-vinda ao seu E-commerce</h2>
-        <p className="text-gray-600 mb-8 max-w-xl mx-auto">Sua loja virtual está rodando com páginas dedicadas para carrinho, frete e autenticação.</p>
+        <p className="text-gray-600 mb-8 max-w-xl mx-auto">Sua loja virtual está rodando com páginas dedicadas.</p>
         
         <button
           onClick={adicionarProdutoTeste}
