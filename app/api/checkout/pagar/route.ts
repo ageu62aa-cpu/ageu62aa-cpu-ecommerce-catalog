@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -14,7 +16,6 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, error: 'O carrinho está vazio.' }, { status: 400 });
     }
 
-    // 1. Salva o pedido no Supabase
     const { data: orderData, error: orderError } = await supabase
       .from('orders')
       .insert([
@@ -32,15 +33,6 @@ export async function POST(request: Request) {
 
     if (orderError) {
       console.error('Erro ao salvar pedido no Supabase:', orderError);
-    }
-
-    // 2. Integração com Asaas (Exemplo base para criação de cobrança)
-    const asaasApiKey = process.env.ASAAS_API_KEY;
-    let paymentResponse = null;
-
-    if (asaasApiKey) {
-      // Aqui você pode disparar a chamada para a API do Asaas se necessário
-      // Exemplo: https://api.asaas.com/v3/payments
     }
 
     return NextResponse.json({
